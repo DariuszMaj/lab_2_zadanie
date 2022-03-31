@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace Lab_003
 {
     class Program
@@ -25,17 +24,14 @@ namespace Lab_003
                 new Meat("Fish", 100.0),
                 new Meat("Beef", 75.0)
             };
-
             Shop shop = new Shop("Super Market", persons, products);
-
-            //shop.Print();
+            shop.Print();
         }
     }
     public interface IThing
     {
-        public string Name { get; set; }
+       public string Name { get; set; }
     }
-
     public class Product : IThing
     {
         private string name;
@@ -44,9 +40,10 @@ namespace Lab_003
         {
             Name = name;
         }
-        //print
-
-
+        public virtual string Print()
+        {
+            return $" {Environment.NewLine}){Environment.NewLine}";       
+        }
     }
     public class Fruit : Product
     {
@@ -55,10 +52,9 @@ namespace Lab_003
 
         public Fruit(string name, int count) : base(name)
         {
-            Name = name;
-            Count = count;
+            this.count = count;
         }
-        //print
+        public override string Print() => $"{Name} ({count} fruits){Environment.NewLine}";
     }
     public class Meat : Product
     {
@@ -66,11 +62,10 @@ namespace Lab_003
         public double Weight { get => weight; set => weight = value; }
 
         public Meat(string name, double weight) : base(name)
-        {
-            Name = name;
-            Weight = weight;
+        {  
+            this.Weight = weight;
         }
-        //print
+        public override string Print() => $"{Name} ({weight} kg){Environment.NewLine}";
     }
     public class Person : IThing
     {
@@ -85,53 +80,80 @@ namespace Lab_003
             Name = name;
             Age = age;
         }
-
-        //print
-
+        public virtual string Print() => $" {Name}, ({Age} y.o.){Environment.NewLine}";
     }
-
     public class Buyer : Person
     {
         protected List<Product> tasks = new List<Product>();
-        public Buyer(string name, int age) : base(name, age)
-        {
-            Name = name;
-            Age = age;
-
-        }
-
+        public Buyer(string name, int age) : base(name, age) { }
         public void AddProduct(Product product)
         {
-            tasks.Add(product);
+            this.tasks.Add(product);
         }
         public void RemoveProduct(int index)
         {
-            tasks.RemoveAt(index); 
+            this.tasks.RemoveAt(index);
+        }
+        public override string Print()
+        {
+            if (tasks.Count == 0)
+            {
+                return $"Buyer: {Name} ({Age} y.o){Environment.NewLine}";
+            }
+            else
+            {
+                string print = $" {Environment.NewLine}Buyer: {Name} ({Age} y.o){Environment.NewLine}{Environment.NewLine}-- Products: -- {Environment.NewLine}";
+
+                foreach (var a in tasks)
+                {
+                    print += a.Print();
+                }
+
+                return print + Environment.NewLine;
+
+
+            }
+
         }
     }
-
-    public class Seller:Person
+    public class Seller : Person
     {
-        public Seller(string name, int age):base(name,age)
-        {
-            Name = name;
-            Age = age;
-        }
-        //print
+    public Seller(string name, int age) : base(name, age) { }
+    public override string Print() => $"Seller: {Name} ({Age} y.o)";
     }
     public class Shop : IThing
-    {
-        private string name;
-        private Person[] people;
-        private Product[] products;
-        public string Name { get => name; set => name = value; }
-
-        public Shop(string name, Person[] people, Product[] products)
         {
-            Name = name;
-            this.people = people;
-            this.products = products;
+            private string name;
+            private Person[] people;
+            private Product[] products;
+            public string Name { get => name; set => name = value; }
+
+            public Shop(string name, Person[] people, Product[] products)
+            {
+                Name = name;
+                this.people = people;
+                this.products = products;
+            }
+
+    public void Print()
+    {
+        Console.WriteLine($"Shop: {name}");
+        string result = $"{Environment.NewLine}  ---People---{Environment.NewLine}";
+
+        foreach (var person in people)
+        {
+            result += person.Print();
         }
-        //print
+
+        result += $"{Environment.NewLine}-- Products: -- {Environment.NewLine}";
+
+        foreach (var product in products)
+        {
+            result += product.Print();
+        }
+
+        Console.WriteLine(result);
     }
+
+}
 }
